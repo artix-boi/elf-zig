@@ -1,4 +1,7 @@
 const std = @import("std");
+const FileHeader = @import("./FileHeader.zig");
+const ProgramHeader = @import("./ProgramHeader.zig");
+const SectionHeader = @import("./SectionHeader.zig");
 pub const Syms = struct {
     num: u64,
     value: u64,
@@ -13,8 +16,8 @@ pub const Syms = struct {
 
 pub const Shdr = struct {
     name: []const u8,
-    shtype: []const u8,
-    flags: usize,
+    shtype: SectionHeader.sh_type,
+    flags: SectionHeader.sh_flags,
     addr: usize,
     offset: usize,
     size: usize,
@@ -33,8 +36,8 @@ pub const Rela = struct {
     plt_addr: ?usize,
 };
 pub const Phdr = struct {
-    ptype: []const u8,
-    flags: []const u8,
+    ptype: ProgramHeader.p_type,
+    flags: ProgramHeader.p_flags,
     offset: usize,
     vaddr: usize,
     paddr: usize,
@@ -44,8 +47,8 @@ pub const Phdr = struct {
 };
 pub const Ehdr = struct {
     identity: [std.elf.EI_NIDENT]u8,
-    etype: std.elf.ET,
-    machine: std.elf.EM,
+    etype: FileHeader.e_type,
+    machine: FileHeader.e_machine,
     version: usize,
     entry: usize,
     phoff: usize,
