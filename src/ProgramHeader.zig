@@ -9,14 +9,15 @@ pub const p_type = enum(u32) {
     TLS = 7,
     NUM = 8,
     LOOS = 0x60000000,
-    GNU = 0x6474e550,
-    GNU = 0x6474e551,
-    GNU = 0x6474e552,
+    GNU_EH_FRAME = 0x6474e550,
+    GNU_STACK = 0x6474e551,
+    GNU_RELRO = 0x6474e552,
     PAX = 0x6ffffffa,
     LOSUNW = 0x6ffffffb,
     SUNWSTACK = 0x6fffffff,
     LOPROC = 0x70000000,
     HIPROC = 0x7fffffff,
+    _,
 };
 
 pub const p_flags = packed struct {

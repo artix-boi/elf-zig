@@ -2,6 +2,7 @@ const std = @import("std");
 const elf = std.elf;
 const arch = @import("./arch.zig");
 const table = @import("../table-helper/table-helper.zig");
+const SectionHeader = @import("./SectionHeader.zig");
 //usingnamespace @import("./arch.zig");
 const elfErrors = error{
     CannotTellIfBinaryIs32or64bit,
@@ -116,33 +117,8 @@ pub fn phdrParse(parse_source: std.fs.File, ehdr: arch.Ehdr, alloc: *std.mem.All
             try parse_source.seekableStream().seekTo(offset);
             try stream.readNoEof(std.mem.asBytes(&phdr));
             var phdr1: arch.Phdr = undefined;
-            phdr1.ptype = switch (phdr.p_type) {
-                0 => "NULL",
-                1 => "LOAD",
-                2 => "DYNAMIC",
-                3 => "INTERP",
-                4 => "NOTE",
-                5 => "SHLIB",
-                6 => "PHDR",
-                7 => "TLS",
-                8 => "NUM",
-                0x60000000 => "LOOS",
-                0x6474e550 => "GNU_EH_FRAME",
-                0x6474e551 => "GNU_STACK",
-                0x6474e552 => "GNU_RELRO",
-                0x6ffffffa => "PAX_FLAGS",
-                0x6ffffffb => "LOSUNW",
-                0x6fffffff => "SUNWSTACK",
-                0x70000000 => "LOPROC",
-                0x7fffffff => "HIPROC",
-                else => ".",
-            };
-            phdr1.flags = switch (phdr.p_flags) {
-                1 => "X",
-                2 => "W",
-                4 => "R",
-                else => ".",
-            };
+            phdr1.ptype = phdr.p_type;
+            phdr1.flags = phdr.p_flags;
             phdr1.offset = phdr.p_offset;
             phdr1.vaddr = phdr.p_vaddr;
             phdr1.paddr = phdr.p_paddr;
@@ -162,33 +138,8 @@ pub fn phdrParse(parse_source: std.fs.File, ehdr: arch.Ehdr, alloc: *std.mem.All
             try parse_source.seekableStream().seekTo(offset);
             try stream.readNoEof(std.mem.asBytes(&phdr));
             var phdr1: arch.Phdr = undefined;
-            phdr1.ptype = switch (phdr.p_type) {
-                0 => "NULL",
-                1 => "LOAD",
-                2 => "DYNAMIC",
-                3 => "INTERP",
-                4 => "NOTE",
-                5 => "SHLIB",
-                6 => "PHDR",
-                7 => "TLS",
-                8 => "NUM",
-                0x60000000 => "LOOS",
-                0x6474e550 => "GNU_EH_FRAME",
-                0x6474e551 => "GNU_STACK",
-                0x6474e552 => "GNU_RELRO",
-                0x6ffffffa => "PAX_FLAGS",
-                0x6ffffffb => "LOSUNW",
-                0x6fffffff => "SUNWSTACK",
-                0x70000000 => "LOPROC",
-                0x7fffffff => "HIPROC",
-                else => ".",
-            };
-            phdr1.flags = switch (phdr.p_flags) {
-                1 => "X",
-                2 => "W",
-                4 => "R",
-                else => ".",
-            };
+            phdr1.ptype = phdr.p_type;
+            phdr1.flags = phdr.p_flags;
             phdr1.offset = phdr.p_offset;
             phdr1.vaddr = phdr.p_vaddr;
             phdr1.paddr = phdr.p_paddr;
@@ -243,35 +194,7 @@ pub fn shdrParse(parse_source: std.fs.File, ehdr: arch.Ehdr, alloc: *std.mem.All
             try stream.readNoEof(std.mem.asBytes(&shdr));
             var shdr1: arch.Shdr = undefined;
             shdr1.name = shdr_get_name(section_strtab, shdr.sh_name);
-            shdr1.shtype = switch (shdr.sh_type) {
-                0 => "NULL",
-                1 => "PROGBITS",
-                2 => "SYMTAB",
-                3 => "STRTAB",
-                4 => "RELA",
-                5 => "HASH",
-                6 => "DYNAMIC",
-                7 => "NOTE",
-                8 => "NOBITS",
-                9 => "REL",
-                10 => "SHLIB",
-                11 => "DYNSYM",
-                14 => "INIT_ARRAY",
-                15 => "FINI_ARRAY",
-                16 => "PREINIT_ARRAY",
-                17 => "GROUP",
-                18 => "SYMTAB_SHNDX",
-                19 => "NUM",
-                0x60000000 => "LOOS",
-                0x6ffffff5 => "GNU_ATTRIBUTES",
-                0x6ffffff6 => "GNU_HASH",
-                0x6ffffff7 => "GNU_LIBLIST",
-                0x6ffffff8 => "CHECKSUM",
-                0x6ffffffd => "GNU_verdef",
-                0x6ffffffe => "GNU_verneed",
-                0x6fffffff => "GNU_versym",
-                else => ".",
-            };
+            shdr1.shtype = shdr.sh_type;
             shdr1.offset = shdr.sh_offset;
             shdr1.entsize = shdr.sh_entsize;
             shdr1.addralign = shdr.sh_addralign;
@@ -295,35 +218,7 @@ pub fn shdrParse(parse_source: std.fs.File, ehdr: arch.Ehdr, alloc: *std.mem.All
             try stream.readNoEof(std.mem.asBytes(&shdr));
             var shdr1: arch.Shdr = undefined;
             shdr1.name = shdr_get_name(section_strtab, shdr.sh_name);
-            shdr1.shtype = switch (shdr.sh_type) {
-                0 => "NULL",
-                1 => "PROGBITS",
-                2 => "SYMTAB",
-                3 => "STRTAB",
-                4 => "RELA",
-                5 => "HASH",
-                6 => "DYNAMIC",
-                7 => "NOTE",
-                8 => "NOBITS",
-                9 => "REL",
-                10 => "SHLIB",
-                11 => "DYNSYM",
-                14 => "INIT_ARRAY",
-                15 => "FINI_ARRAY",
-                16 => "PREINIT_ARRAY",
-                17 => "GROUP",
-                18 => "SYMTAB_SHNDX",
-                19 => "NUM",
-                0x60000000 => "LOOS",
-                0x6ffffff5 => "GNU_ATTRIBUTES",
-                0x6ffffff6 => "GNU_HASH",
-                0x6ffffff7 => "GNU_LIBLIST",
-                0x6ffffff8 => "CHECKSUM",
-                0x6ffffffd => "GNU_verdef",
-                0x6ffffffe => "GNU_verneed",
-                0x6fffffff => "GNU_versym",
-                else => ".",
-            };
+            shdr1.shtype = shdr.sh_type;
             shdr1.offset = shdr.sh_offset;
             shdr1.entsize = shdr.sh_entsize;
             shdr1.addralign = shdr.sh_addralign;
@@ -346,13 +241,13 @@ pub fn getSyms(parse_source: std.fs.File, alloc: *std.mem.Allocator, Is32: bool,
     const stream = parse_source.reader();
     var dynstr: ?*arch.Shdr = null;
     for (ShdrArray) |*section| {
-        if (std.mem.eql(u8, section.shtype, "SYMTAB") or std.mem.eql(u8, section.shtype, "DYNSYM")) {
+        if (section.shtype ==  SectionHeader.sh_type.SYMTAB or section.shtype == SectionHeader.sh_type.DYNSYM) {
             try symtabList.append(section);
         }
-        if (std.mem.eql(u8, section.shtype, "STRTAB") and (std.mem.eql(u8, section.name, ".strtab"))) {
+        if (section.shtype == SectionHeader.sh_type.STRTAB and (std.mem.eql(u8, section.name, ".strtab"))) {
             strtab = section;
         }
-        if (std.mem.eql(u8, section.shtype, "STRTAB") and (std.mem.eql(u8, section.name, ".dynstr"))) {
+        if (section.shtype == SectionHeader.sh_type.STRTAB and (std.mem.eql(u8, section.name, ".dynstr"))) {
             dynstr = section;
         }
     }

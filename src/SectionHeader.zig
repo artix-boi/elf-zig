@@ -18,13 +18,14 @@ pub const sh_type = enum(u32) {
     SYMTAB = 18,
     NUM = 19,
     LOOS = 0x60000000,
-    GNU = 0x6ffffff5,
-    GNU = 0x6ffffff6,
-    GNU = 0x6ffffff7,
+    GNU_ATTRIBUTES = 0x6ffffff5,
+    GNU_HASH = 0x6ffffff6,
+    GNU_LIBLIST = 0x6ffffff7,
     CHECKSUM = 0x6ffffff8,
-    verdef = 0x6ffffffd,
-    GNU = 0x6ffffffe,
-    GNU = 0x6fffffff,
+    GNU_verdef = 0x6ffffffd,
+    GNU_verneed = 0x6ffffffe,
+    GNU_versym = 0x6fffffff,
+    _,
 };
 
 pub const sh_flags = packed struct {
@@ -47,4 +48,5 @@ pub const sh_flags = packed struct {
     SHF_MASKOS: u8,
     SHF_MASKPROC: u4,
     //TODO: Solaris SHF_ORDERED, SHF_EXCLUDE
+    _,
 };
