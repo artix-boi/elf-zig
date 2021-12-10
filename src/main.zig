@@ -1,6 +1,2 @@
-const std = @import("std");
-const elf = @import("./elf.zig");
-const arch = @import("./arch.zig");
-
-
-pub fn main()!void{}
+pub usingnamespace @import("./elf.zig");
+pub const arch = @import("./arch.zig");

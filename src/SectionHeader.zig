@@ -48,5 +48,4 @@ pub const sh_flags = packed struct {
     SHF_MASKOS: u8,
     SHF_MASKPROC: u4,
     //TODO: Solaris SHF_ORDERED, SHF_EXCLUDE
-    _,
 };
