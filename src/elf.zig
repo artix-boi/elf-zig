@@ -27,7 +27,7 @@ pub const ELF = struct {
     //linker: []const u8,
     //fill_gaps: bool = true,
     const Self = @This();
-    pub fn init(path: []const u8, alloc: std.mem.Allocator) !ELF {
+    pub fn init(path: []const u8, alloc: *std.mem.Allocator) !ELF {
         var f = try openElf(path);
         var is = try is32(f);
         var ehdr = try ehdrParse(f, is);
@@ -119,7 +119,7 @@ pub fn openElf(file: []const u8) !std.fs.File {
     return std.fs.cwd().openFile(file, .{});
 }
 
-pub fn phdrParse(parse_source: std.fs.File, ehdr: arch.Ehdr, alloc: std.mem.Allocator, Is32: bool) ![]arch.Phdr {
+pub fn phdrParse(parse_source: std.fs.File, ehdr: arch.Ehdr, alloc: *std.mem.Allocator, Is32: bool) ![]arch.Phdr {
     var list = std.ArrayList(arch.Phdr).init(alloc);
     defer list.deinit();
     if (Is32 == false) {
@@ -141,7 +141,7 @@ pub fn phdrParse(parse_source: std.fs.File, ehdr: arch.Ehdr, alloc: std.mem.Allo
             phdr1.palign = phdr.p_align;
             try list.append(phdr1);
         }
-        const a = alloc.dupe(arch.Phdr, list.items);
+        const a = std.mem.dupe(alloc, arch.Phdr, list.items);
         return a;
     } else {
         var i: usize = 0;
@@ -162,11 +162,11 @@ pub fn phdrParse(parse_source: std.fs.File, ehdr: arch.Ehdr, alloc: std.mem.Allo
             phdr1.palign = phdr.p_align;
             try list.append(phdr1);
         }
-        const a = alloc.dupe(arch.Phdr, list.items);
+        const a = std.mem.dupe(alloc, arch.Phdr, list.items);
         return a;
     }
 }
-fn shdr_get_name_init(parse_source: anytype, ehdr: arch.Ehdr, shstrndx: u64, alloc: std.mem.Allocator, Is32: bool) ![]const u8 {
+fn shdr_get_name_init(parse_source: anytype, ehdr: arch.Ehdr, shstrndx: u64, alloc: *std.mem.Allocator, Is32: bool) ![]const u8 {
     if (!Is32) {
         var shdr: std.elf.Elf64_Shdr = undefined;
         const buf = std.mem.asBytes(&shdr);
@@ -192,7 +192,7 @@ fn shdr_get_name(list: []const u8, offset: u64) []const u8 {
         return "";
     }
 }
-pub fn shdrParse(parse_source: std.fs.File, ehdr: arch.Ehdr, alloc: std.mem.Allocator, Is32: bool) ![]arch.Shdr {
+pub fn shdrParse(parse_source: std.fs.File, ehdr: arch.Ehdr, alloc: *std.mem.Allocator, Is32: bool) ![]arch.Shdr {
     var list = std.ArrayList(arch.Shdr).init(alloc);
     defer list.deinit();
     const stream = parse_source.reader();
@@ -249,7 +249,7 @@ pub fn shdrParse(parse_source: std.fs.File, ehdr: arch.Ehdr, alloc: std.mem.Allo
         return try alloc.dupe(arch.Shdr, list.items);
     }
 }
-pub fn getSyms(parse_source: std.fs.File, alloc: std.mem.Allocator, Is32: bool, ShdrArray: []arch.Shdr) !std.ArrayList(arch.Syms) {
+pub fn getSyms(parse_source: std.fs.File, alloc: *std.mem.Allocator, Is32: bool, ShdrArray: []arch.Shdr) !std.ArrayList(arch.Syms) {
     var symtabList = std.ArrayList(*arch.Shdr).init(alloc);
     var strtab: ?*arch.Shdr = null;
     const stream = parse_source.reader();
@@ -409,7 +409,7 @@ pub fn ELF32_ST_VISIBILITY(o: anytype) c_int {
 }
 pub fn getRela(
     parse_source: std.fs.File,
-    alloc: std.mem.Allocator,
+    alloc: *std.mem.Allocator,
     Is32: bool,
     shdrList: []arch.Shdr,
     dynsymlist: std.ArrayList(arch.Syms),
