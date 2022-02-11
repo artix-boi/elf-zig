@@ -1,3 +1,5 @@
+const std = @import("std");
+
 pub const sh_type = enum(u32) {
     NULL = 0,
     PROGBITS = 1,
@@ -45,6 +47,19 @@ pub const sh_flags = packed struct {
     pad_0xF0000: u4,
     SHF_MASKOS: u8,
     SHF_MASKPROC: u4,
-    pad_32bit:u32,
+    pad_32bit: u32,
     //TODO: Solaris SHF_ORDERED, SHF_EXCLUDE
+};
+
+pub const Shdr = struct {
+    name: []const u8,
+    shtype: sh_type,
+    flags: sh_flags,
+    addr: usize,
+    offset: usize,
+    size: usize,
+    link: usize,
+    info: usize,
+    addralign: usize,
+    entsize: usize,
 };

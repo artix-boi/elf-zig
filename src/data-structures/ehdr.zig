@@ -1,26 +1,4 @@
-pub const e_ident = struct {
-    pub const EI_OSABI = enum(u8) {
-        SystemV = 0x00,
-        HP_UX = 0x01,
-        NetBSD = 0x02,
-        Linux = 0x03,
-        GNU_Hurd = 0x04,
-        Solaris = 0x06,
-        AIX = 0x07,
-        IRIX = 0x08,
-        FreeBSD = 0x09,
-        Tru64 = 0x0A,
-        Novell_Modesto = 0x0B,
-        OpenBSD = 0x0C,
-        OpenVMS = 0x0D,
-        NonStop_Kernel = 0x0E,
-        AROS = 0x0F,
-        Fenix_OS = 0x10,
-        CloudABI = 0x11,
-        Stratus_VOS = 0x12,
-        _,
-    };
-};
+const std = @import("std");
 
 pub const e_type = enum(u16) {
     ET_NONE = 0x00,
@@ -571,4 +549,53 @@ pub const e_machine = enum(u16) {
     /// Linux kernel bpf virtual machine
     _BPF = 247,
     _,
+};
+
+pub const Ehdr = struct {
+    identity: [std.elf.EI_NIDENT]u8,
+    etype: e_type,
+    machine: e_machine,
+    version: usize,
+    entry: usize,
+    phoff: usize,
+    shoff: usize,
+    flags: usize,
+    ehsize: usize,
+    phentsize: usize,
+    phnum: usize,
+    shentsize: usize,
+    shnum: usize,
+    shstrndx: usize,
+};
+pub const Elf32_Ehdr = packed struct {
+    e_ident: [std.elf.EI_NIDENT]u8,
+    e_type: e_type,
+    e_machine: e_machine,
+    e_version: std.elf.Elf32_Word,
+    e_entry: std.elf.Elf32_Addr,
+    e_phoff: std.elf.Elf32_Off,
+    e_shoff: std.elf.Elf32_Off,
+    e_flags: std.elf.Elf32_Word,
+    e_ehsize: std.elf.Elf32_Half,
+    e_phentsize: std.elf.Elf32_Half,
+    e_phnum: std.elf.Elf32_Half,
+    e_shentsize: std.elf.Elf32_Half,
+    e_shnum: std.elf.Elf32_Half,
+    e_shstrndx: std.elf.Elf32_Half,
+};
+pub const Elf64_Ehdr = packed struct {
+    e_ident: [std.elf.EI_NIDENT]u8,
+    e_type: e_type,
+    e_machine: e_machine,
+    e_version: std.elf.Elf64_Word,
+    e_entry: std.elf.Elf64_Addr,
+    e_phoff: std.elf.Elf64_Off,
+    e_shoff: std.elf.Elf64_Off,
+    e_flags: std.elf.Elf64_Word,
+    e_ehsize: std.elf.Elf64_Half,
+    e_phentsize: std.elf.Elf64_Half,
+    e_phnum: std.elf.Elf64_Half,
+    e_shentsize: std.elf.Elf64_Half,
+    e_shnum: std.elf.Elf64_Half,
+    e_shstrndx: std.elf.Elf64_Half,
 };
